@@ -1,0 +1,64 @@
+{
+    "builders": 
+    [
+        {
+        "type": "proxmox",
+        "proxmox_url": "https://{{ user `proxmox_webui` }}/api2/json",
+        "insecure_skip_tls_verify": "1",
+        "username": "{{ user `proxmox_username` }}",
+        "password": "{{ user `proxmox_password` }}",
+        "node": "pve",
+        "vm_id": "{{ user `proxmox_vm_id` }}",
+        "network_adapters": [{
+        "model": "virtio",
+        "bridge": "vmbr0"
+        }
+    ],
+    "disks": 
+    [
+        {
+        "type": "virtio",
+        "disk_size": "20G",
+        "storage_pool": "{{ user `proxmox_storage_pool` }}",
+        "storage_pool_type": "zfspool"
+        }
+    ],
+
+    "iso_file": "{{ user `proxmox_iso_path` }}/{{ user `ubuntu_iso_file` }}",
+    "unmount_iso": true,
+    "boot_wait": "5s",
+    "memory": 1024,
+    "template_name": "{{ user `proxmox_template_name` }}",
+    "http_directory": "http",
+    "boot_command": 
+    [
+        "<esc><wait><esc><wait><f6><wait><esc><wait>",
+        "<bs><bs><bs><bs><bs>",
+        "autoinstall ds=nocloud-net;s=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ ",
+        "--- <enter>"
+    ],
+    "ssh_username": "fr3dx",
+    "ssh_password": "passwd",
+    "ssh_timeout": "30m"
+}
+    ],
+    "provisioners": 
+    [
+        {
+            "type": "shell",
+            "inline": 
+                [
+                    "while [ ! -f /var/lib/cloud/instance/boot-finished ]; do echo 'Waiting for cloud-init...'; sleep 1; done"
+                ]
+        },
+        {
+            "type": "ansible",
+            "playbook_file": "./site.yml",
+            "extra_arguments": 
+                [
+                    "--extra-vars",
+                    "ansible_python_interpreter=/usr/bin/python3"
+                ]
+        }
+    ]
+}

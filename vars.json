@@ -1,0 +1,11 @@
+{
+	"proxmox_username": "root@pam",
+	"proxmox_password": "passwd",
+	"proxmox_webui": "192.168.1.10:8006",
+    "proxmox_vm_id": "500",
+	"proxmox_iso_path": "/zfs01/ISO/template/iso",
+    "proxmox_template_name": "Ubuntu2004tmplt",
+	"proxmox_storage_pool": "STORAGE",
+    "ubuntu_iso_file": "ubuntu-20.04.1-live-server-amd64.iso"
+}
+
